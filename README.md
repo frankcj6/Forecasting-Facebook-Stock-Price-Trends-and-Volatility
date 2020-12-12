@@ -1,5 +1,6 @@
 # Forecasting-Facebook-Stock-Price-Trends-and-Volatility
 Created by Frank Jiang
+
 ![Project_Image](https://www.marketplace.org/wp-content/uploads/2019/09/stock-market-thumb.jpg)
 
 ---
@@ -7,7 +8,7 @@ Created by Frank Jiang
    - [Description](#Description)
    - [Data](#Data)
    - [Model Fitting](#Model)
-   - [Forecasting and Evaluation](#Forecasting_Evaluation)
+   - [Forecasting and Evaluation](#Forecasting and Evaluation)
    - [Limitations](#Limitations)
 ## Description
  
