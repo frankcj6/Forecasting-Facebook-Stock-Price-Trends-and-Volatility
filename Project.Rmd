@@ -3,8 +3,9 @@ title: "Time Series Analysis and Prediction of Facebook Historical Stock Prices"
 author: "Frank Jiang"
 date: "12/11/2020"
 output:
-  github_document:
-    toc: true
+  html_document:
+    keep_md: yes
+  github_document: default
 ---
 
 ```{r setup, include=FALSE}
