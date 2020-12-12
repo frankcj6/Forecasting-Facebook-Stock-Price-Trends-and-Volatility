@@ -8,7 +8,7 @@ Created by Frank Jiang
    - [Description](#Description)
    - [Data](#Data)
    - [Model Fitting](#Model)
-   - [Forecasting and Evaluation](#Forecasting and Evaluation)
+   - [Forecasting and Evaluation](#Evaluation)
    - [Limitations](#Limitations)
 ## Description
  
@@ -39,7 +39,8 @@ _*Figure 1 Feed Forward Neural Network Algorithm_
 ![Time_Series_Plot](Project_files/figure-gfm/unnamed-chunk-4-1.png)
 _*Figure 2 Time Series Plot of the log closing price of Facebook Stock_
 
-## Forecasting and Evaluation
+## Forecasting & Evaluation
+### Evaluation
 
 The ARIMA model does not give us a good result. The ARIMA results are biased since it is explained by votaile observations of dataset and financial market series. Therefore, GARCH model is being used as it has the foundation on making ‘Volatility Clustering’. It is typical that stock market contains period with relative calm movements and high volatility in other times. Therefore, GARCH model can be used to minimize the volatility effect.
 
