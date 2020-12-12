@@ -3,9 +3,8 @@ title: "Time Series Analysis and Prediction of Facebook Historical Stock Prices"
 author: "Frank Jiang"
 date: "12/11/2020"
 output:
-  html_document:
-    df_print: paged
-  pdf_document: default
+  github_document:
+    toc: true
 ---
 
 ```{r setup, include=FALSE}
@@ -53,6 +52,7 @@ FB_Stock_Price<- FB_Stock_Price %>% mutate(Date = as.Date(Date))
 ### Exploratory Analysis
 
 First of all, we plot the time series of Facebook's close price from 2012 to 2020. We can observe that the mean is not zero and the variance is very high. This indicates that the time series is non-staionary. Therefore, we decide to take the log of the Facebook's stock close price.
+
 ```{r}
 # plot the close price of Facebook stock
 FB_Stock_Price_Inital<- xts(x=FB_Stock_Price$Close, order.by=FB_Stock_Price$Date)
@@ -64,8 +64,8 @@ Plot_Initial<- dygraph(FB_Stock_Price_Inital, main='Time Series Plot of the Face
 
 Plot_Initial
 ```
-### Time Series
 
+### Time Series
 
 ```{r}
 #Take the log value of stock price
@@ -85,9 +85,11 @@ Plot_log
 acf(FB_Stock_Price$Log_Price)
 pacf(FB_Stock_Price$Log_Price)
 ```
+
 We plot the time series, ACF, and PACF of the time series. We can observe that the ACF correlation slowly decays to zero. Therefore, we decide to take the difference of the log price, which is the return of the log price. 
 
 From the time series plot of the log return of the stock price, we can observe that the mean is 0. The ACF and PACF plot later prove the point that the log return of the stock price are stationary.
+
 ```{r}
 #Take the first difference
 FB_Stock_Price<- FB_Stock_Price %>% mutate(Date = as.Date(Date), Log_Price=log(Close), D1_Log_Price=c(0,diff(Log_Price,1)))
@@ -109,11 +111,13 @@ Plot_diff
 acf(FB_Stock_Price$D1_Log_Price)
 pacf(FB_Stock_Price$D1_Log_Price)
 ```
+
 From the ACF plot, we can see that the correlation cuts off at 0 and from the PACF plot, we observe that the correlation cuts off at 6. However, it is really for the benefit of model fitting to choose ARIMA(p,1,q) with p and q less than 2. (*Note, this means that ARIMA might not be a suitable model for this data.)
 
 ### ARIMA Model Fitting & evaluation
 
 Here we fit the ARIMA model using p from 0 to 2 and q from 0 to 2. 
+
 ```{r}
 #Select ARIMA model using AICC
 arima_model<- auto.arima(FB_Stock_Price$Log_Price,d=1, max.p=2, max.q=2, ic='aicc',allowdrift = T)
@@ -138,6 +142,7 @@ arima_fit<- arima_model$fitted
 # one-step ahead forecast and 95% Confidence Interval
 forecast(arima_fit, h=1, level=95)
 ```
+
 Based on the AICc value, we can conclude that the best ARIMA model is ARIMA(2,1,1). 
 The full model is:
 $$x_t=y_t-y_{t-1}$$
@@ -146,8 +151,10 @@ $$x_t=-0.2145*x_{t-1}+0.0160*x_{t-2}+0.1838*\epsilon_{t-1}+\epsilon_t$$,where $$
 We can also conclude that the residuals are not correlated based on the ACF and PACF plot. However, the squared residuals have significant autocorrelations. This implies that the residuals are uncorrelated but not independent of each other. The Box-Ljung test proves our conclusion(p-value of 0.9).
 
 ### ARMA-GARCH
+
 Since the ARIMA model does not give us a good result. The ARIMA results are biased since it is explained by votaile observations of dataset and financial market series. Therefore, GARCH model is being used as it has the foundation on making 'Volatility Clustering'. 
 It is typical that stock market contains period with relative calm movements and high volatility in other times. Therefore, GARCH model can be used to minimize the volatility effect.
+
 ```{r}
 # effective sample size
 N<- length(FB_Stock_Price$Log_Price)-1
@@ -184,6 +191,7 @@ ifelse(min(arch)<AICC_generator(N,2,logLik(garch_model)),'select ARCH model','Se
 summary(garch_model)
 logLik(garch_model)
 ```
+
 We Calcuate the AICc value, and used it as the criterion for model selection. Finally, an GARCH(1,1) is selected. The full model should be the following:
 $$\epsilon_t|\psi_{t-1} \in N(0,h_t)$$
 $$h_t=1.106\times10^-6+0.01792\times\epsilon^2_{t-1}+0.98\times h_{t-1}$$
@@ -192,6 +200,7 @@ The unconditional variance is significant, however, extremly close to zero.
 ### Forecasting
 
 We then use the GARCH(1,1) model to construct the 95% confidence interval one-step forecast for the log of Facebook's Stock Price.
+
 ```{r}
 #conditional variance
 ht<- garch_model$fit[,1]^2
@@ -205,9 +214,11 @@ as.numeric(forecast(arima_model, h=1)$mean)-1.96*sqrt(as.numeric(for_var))
 as.numeric(forecast(arima_model, h=1)$mean)+1.96*sqrt(as.numeric(for_var))
 
 ```
+
 Based on the ARMA-GARCH model, the forecast interval is [5.6026,5.7166], which is different than the ARIMA(2,1,2) model. However, the intuition is that the ARMA-GARCH should be more accurate results than the ARIMA model. 
 
 ### Evaluation & Validation
+
 Here, we graph the one-step forecast graph using the ARMA-GARCH model together with the log price of the Facebook stock. We can see that the prediction are relatively accurate. 
 
 ```{r,warning=FALSE}
@@ -236,6 +247,7 @@ failure
 fail_pct<- failure/(length(archres)-1)
 fail_pct
 ```
+
 However, the ARMA-GARCH model still does not seem to adequately address the 'long-tailedness' in the data. When it is closing to the tail, we can see that the data point does not fall on the line.
 
 We also calculated that there are 88 failures in the prediction comparing to the orginal data. The percentage of the time that the interval fails is 4.1%, which is relatively good in prediction. 
@@ -257,6 +269,7 @@ dnn_pred<- nnetar(FB_Stock_Price$Log_Price, size=hn, lambda=lambda)
 dnn_forecast<- forecast(dnn_pred, h=1, PI=TRUE)
 plot(dnn_forecast)
 ```
+
 The forecast interval using the Feed Forward neural network is [5.64,5.68], which is much stricter interval than ARMA-GARCH model. Therefore, Feed Forward Neural network might be the best model in predicting the trends of Stock Prices.
 
 
