@@ -34,9 +34,11 @@ For detailed modeling and code, you can more than welcome to read our source cod
 [SourceCode](Project.Rmd)
 
 ![FNN_Model](https://images.deepai.org/django-summernote/2019-06-06/5c17d9c2-0ad4-474c-be8d-d6ae9b094e74.png)
+
 _*Figure 1 Feed Forward Neural Network Algorithm_
 
 ![Time_Series_Plot](Project_files/figure-gfm/unnamed-chunk-4-1.png)
+
 _*Figure 2 Time Series Plot of the log closing price of Facebook Stock_
 
 ## Forecasting & Evaluation
@@ -47,16 +49,19 @@ The ARIMA model does not give us a good result. The ARIMA results are biased sin
 we graph the one-step forecast graph using the ARMA-GARCH model together with the log price of the Facebook stock. 
 
 ![Forecast_Interval](Project_files/figure-gfm/unnamed-chunk-14-1.png)
+
 _*Figure 3 95% One-step forward Forecasting Interval_
 
 We also calculated that there are 88 failures in the prediction comparing to the orginal data. The percentage of the time that the interval fails is 4.1%, which is relatively good in prediction.
 
 ![Normality](Project_files/figure-gfm/unnamed-chunk-15-1.png)
+
 _*Figure 4 Normality Plot_
 
 We have also test the deep learning method: FNN, which seems to be a better forecasting model
 
 ![Neural Network](Project_files/figure-gfm/unnamed-chunk-16-1.png)
+
 _*Figure 5 Neural Network Forecast Time Series Plot_
 
 ## Limitations
@@ -66,4 +71,5 @@ lthough we use the ARMA-GARCH model to correct the ARIMA predictions and provide
 Prophet Forecasting is a forecasting model for supply chain management, sales and economics, developed by Facebook’s core Data Science Team, which includes the seasonality with Fourier series and addressing for other major events(such as COVID).
 
 ![Prophet Forecasting](https://research.fb.com/wp-content/uploads/2017/02/image-2.png?w=884)
+
 _*Figure 6 Prophet Forecasting Model used by Facebook_
